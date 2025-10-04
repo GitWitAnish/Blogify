@@ -1,4 +1,5 @@
 const { Router } = require('express');
+const User = require('../models/user');
 
 const router = Router();
 
@@ -11,11 +12,16 @@ router.get('/signin', (req, res) => {
 });
 
 router.post('/signup', async (req, res) => {
-    const { name, email, password } = req.body;
-    await User.create({ name, email, password });
-
-    return res.redirect('/');
-
+    try {
+        const { name, email, password } = req.body;
+        console.log('Creating user:', { name, email }); // Debug log
+        await User.create({ name, email, password });
+        console.log('User created successfully');
+        return res.redirect('/');
+    } catch (error) {
+        console.error('Error creating user:', error);
+        return res.status(500).send('Error creating user');
+    }
 });
 
 module.exports = router;
