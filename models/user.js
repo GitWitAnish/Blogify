@@ -48,8 +48,20 @@ userSchema.pre('save', function(next){
           next();
 });
 
+userSchema.static('matchPassword', async function(email, password){
+    const user = await this.findOne({email});
 
+    if(!user) throw new Error('User not found');
 
+    const hashedPassword = createHmac('sha256', user.salt)
+          .update(password)
+          .digest('hex');
+
+    if(user.password === hashedPassword) 
+        return user;
+    else
+        throw new Error('Invalid password');
+});
 
 const User = model('User', userSchema);
 module.exports = User;
