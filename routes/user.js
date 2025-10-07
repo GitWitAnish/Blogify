@@ -15,11 +15,14 @@ router.post('/signin', async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        const user = await User.matchPassword(email, password);
-        console.log('User authenticated successfully:', user.name);
-        return res.redirect('/');
+        const token = await User.matchPasswordAndCreateToken(email, password);
+  
+
+        return res.cookie('token', token).redirect('/');
     } catch (error) {
-        return res.status(400).send(`Sign in failed: ${error.message}`);
+        return res.render('signin', {
+          error: "Incorrect Email or Password"
+        })
     }
 });
 
@@ -32,7 +35,9 @@ router.post('/signup', async (req, res) => {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       console.log('Email already exists');
-      return res.status(400).send('Email already exists');
+      return res.render('signup', {
+        error: 'Email already exists'
+      });
     }
 
     await User.create({ name, email, password });
@@ -40,7 +45,9 @@ router.post('/signup', async (req, res) => {
     return res.redirect('/signin');
   } catch (error) {
     console.error('Error creating user:', error);
-    return res.status(500).send('Error creating user');
+    return res.render('signup', {
+      error: 'Error creating user'
+    });
   }
 });
 
