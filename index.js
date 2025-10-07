@@ -1,8 +1,10 @@
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser')
 
 const userRouter = require('./routes/user');
+const { checkForAuthenticationCookie } = require('./middlewares/authentication');
 
 mongoose.connect('mongodb://localhost:27017/blogify')
   .then(() => {
@@ -19,6 +21,8 @@ const port = 8000;
 app.use(express.static(path.resolve('./public')));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+app.use(cookieParser());
+app.use(checkForAuthenticationCookie('token'));
 
 // View engine setup
 app.set('view engine', 'ejs');
@@ -26,7 +30,9 @@ app.set('views', path.resolve('./views'));
 
 
 app.get('/', (req, res) => {
-  return res.render('home');
+  return res.render('home', {
+      user: req.user
+  });
 });
 
 
