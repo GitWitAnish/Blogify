@@ -1,24 +1,24 @@
-const {Schema, model} = require('mongoose');
+const { Schema, model } = require('mongoose');
 
 const blogSchema = new Schema({
     title: {
         type: String,
-        required: true
+        required: true,
     },
     body: {
         type: String,
         required: true
     },
+    coverImageURL: {
+        type: String,
+        default: null
+    },
     createdBy: {
         type: Schema.Types.ObjectId,
-        ref: 'User',
+        ref: 'user',
         required: true
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now
     }
-});
+}, { timestamps: true });
 
 const Blog = model('blog', blogSchema);
 
