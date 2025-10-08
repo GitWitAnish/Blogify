@@ -10,7 +10,9 @@ function checkForAuthenticationCookie(cookieName){
         try{
             const userPayload = verifyToken(tokenCookieValue);
             req.user = userPayload;
-        } catch (error){}
+        } catch (error){
+            console.log('Token verification failed:', error.message);
+        }
             
         return next();
     }
