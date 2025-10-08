@@ -33,7 +33,35 @@ router.get('/add', (req, res) => {
     });
 });
 
+router.post('/add', upload.single('coverImage'), async (req, res) => {
+    if(!req.user){
+        return res.redirect('/user/signin');
+    }
 
+    try {
+        const { title, body } = req.body;
+        let coverImageURL = null;
+
+        if (req.file) {
+            coverImageURL = `/uploads/${req.user._id}/${req.file.filename}`;
+        }
+
+        await Blog.create({
+            title,
+            body,
+            coverImageURL,
+            createdBy: req.user._id
+        });
+
+        return res.redirect('/');
+    } catch (error) {
+        console.error('Error creating blog post:', error);
+        return res.render('addBlog', {
+            user: req.user,
+            error: 'Error creating blog post'
+        });
+    }
+});
 
 
 module.exports = router;
