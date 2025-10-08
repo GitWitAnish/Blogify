@@ -10,14 +10,23 @@
     <div class="container mt-4">
         <div class="row">
             <div class="col-12">
-                <h1 class="display-4">Welcome to My Blog</h1>
-                <p class="lead">This is a simple blog application built with Express and EJS.</p>
-                <hr class="my-4">
-                <p>Test the user registration functionality:</p>
-                <div class="mt-4">
-                    <a href="/user/signup" class="btn btn-primary me-2">Sign Up</a>
-                    <a href="/user/signin" class="btn btn-outline-primary">Sign In</a>
-                </div>
+                <% if (locals.user) { %>
+                    <h1 class="display-4">Welcome back, <%= user.name %>!</h1>
+                    <p class="lead">You are successfully signed in to the blog.</p>
+                    <hr class="my-4">
+                    <div class="mt-4">
+                        <a href="/user/logout" class="btn btn-outline-danger">Logout</a>
+                    </div>
+                <% } else { %>
+                    <h1 class="display-4">Welcome to My Blog</h1>
+                    <p class="lead">This is a simple blog application built with Express and EJS.</p>
+                    <hr class="my-4">
+                    <p>Please sign in or create an account:</p>
+                    <div class="mt-4">
+                        <a href="/user/signup" class="btn btn-primary me-2">Sign Up</a>
+                        <a href="/user/signin" class="btn btn-outline-primary">Sign In</a>
+                    </div>
+                <% } %>
             </div>
         </div>
     </div>
