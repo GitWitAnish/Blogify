@@ -3,6 +3,8 @@ const path = require('path');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser')
 
+const Blog = require('./models/blog');
+
 const userRouter = require('./routes/user');
 const blogRouter = require('./routes/blog');
 
@@ -32,10 +34,22 @@ app.set('view engine', 'ejs');
 app.set('views', path.resolve('./views'));
 
 
-app.get('/', (req, res) => {
-  return res.render('home', {
-      user: req.user
-  });
+app.get('/', async (req, res) => {
+  try {
+    const allBlogs = await Blog.find({}).populate('createdBy', 'name').sort({ createdAt: -1 });
+    
+    return res.render('home', {
+        user: req.user,
+        blogs: allBlogs,
+    });
+  } catch (error) {
+    console.error('Error fetching blogs:', error);
+    return res.render('home', {
+        user: req.user,
+        blogs: [],
+        error: 'Error loading blogs'
+    });
+  }
 });
 
 
