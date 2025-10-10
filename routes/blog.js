@@ -91,5 +91,23 @@ router.get('/:id', async (req, res) => {
     }
 });
 
+router.post('/:id/delete', async (req, res) => {
+    if(!req.user){
+        return res.redirect('/user/signin');
+    }   
+
+    const blogId = req.params.id;
+
+    try {
+        await Blog.findByIdAndDelete(blogId);
+        return res.redirect('/');
+    } catch (error) {
+        console.error('Error deleting blog post:', error);
+        return res.status(500).render('blogDetails', {
+            user: req.user,
+            error: 'Error deleting blog post'
+        });
+    }
+});
 
 module.exports = router;
