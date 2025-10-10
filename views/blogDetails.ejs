@@ -33,15 +33,8 @@
                         
                         <!-- Author Info -->
                         <div class="d-flex align-items-center mb-3">
-                            <% if (blog.createdBy.profileImageURL) { %>
-                                <img src="<%= blog.createdBy.profileImageURL %>" alt="<%= blog.createdBy.name %>" 
-                                     class="rounded-circle me-3" width="50" height="50">
-                            <% } else { %>
-                                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3" 
-                                     style="width: 50px; height: 50px;">
-                                    <%= blog.createdBy.name.charAt(0).toUpperCase() %>
-                                </div>
-                            <% } %>
+                            <img src="/images/avatar.jpg" alt="<%= blog.createdBy.name %>" 
+                                 class="rounded-circle me-3" width="50" height="50" style="object-fit: cover;">
                             <div>
                                 <h6 class="mb-0">By <%= blog.createdBy.name %></h6>
                                 <small class="text-muted">
@@ -106,15 +99,8 @@
                                     <form action="/blog/comment/<%= blog._id %>" method="POST">
                                         <div class="mb-3">
                                             <div class="d-flex align-items-start">
-                                                <% if (user.profileImageURL) { %>
-                                                    <img src="<%= user.profileImageURL %>" alt="<%= user.name %>" 
-                                                         class="rounded-circle me-3" width="40" height="40">
-                                                <% } else { %>
-                                                    <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center me-3" 
-                                                         style="width: 40px; height: 40px; font-size: 0.9rem;">
-                                                        <%= user.name.charAt(0).toUpperCase() %>
-                                                    </div>
-                                                <% } %>
+                                                <img src="/images/avatar.jpg" alt="<%= user.name %>" 
+                                                     class="rounded-circle me-3" width="40" height="40" style="object-fit: cover;">
                                                 <div class="flex-grow-1">
                                                     <textarea class="form-control" name="content" rows="3" 
                                                             placeholder="Share your thoughts..." 
@@ -148,15 +134,8 @@
                                     <div class="card mb-3">
                                         <div class="card-body">
                                             <div class="d-flex align-items-start">
-                                                <% if (comment.user.profileImageURL) { %>
-                                                    <img src="<%= comment.user.profileImageURL %>" alt="<%= comment.user.name %>" 
-                                                         class="rounded-circle me-3" width="40" height="40">
-                                                <% } else { %>
-                                                    <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center me-3" 
-                                                         style="width: 40px; height: 40px; font-size: 0.9rem;">
-                                                        <%= comment.user.name.charAt(0).toUpperCase() %>
-                                                    </div>
-                                                <% } %>
+                                                <img src="/images/avatar.jpg" alt="<%= comment.user.name %>" 
+                                                     class="rounded-circle me-3" width="40" height="40" style="object-fit: cover;">
                                                 <div class="flex-grow-1">
                                                     <div class="d-flex justify-content-between align-items-center mb-1">
                                                         <h6 class="mb-0">
@@ -197,15 +176,8 @@
                         <div class="col-md-6">
                             <div class="card">
                                 <div class="card-body text-center">
-                                    <% if (blog.createdBy.profileImageURL) { %>
-                                        <img src="<%= blog.createdBy.profileImageURL %>" alt="<%= blog.createdBy.name %>" 
-                                             class="rounded-circle mb-2" width="80" height="80">
-                                    <% } else { %>
-                                        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mx-auto mb-2" 
-                                             style="width: 80px; height: 80px; font-size: 2rem;">
-                                            <%= blog.createdBy.name.charAt(0).toUpperCase() %>
-                                        </div>
-                                    <% } %>
+                                    <img src="/images/avatar.jpg" alt="<%= blog.createdBy.name %>" 
+                                         class="rounded-circle mb-2" width="80" height="80" style="object-fit: cover;">
                                     <h5 class="card-title"><%= blog.createdBy.name %></h5>
                                     <p class="card-text text-muted">Blog Author</p>
                                 </div>

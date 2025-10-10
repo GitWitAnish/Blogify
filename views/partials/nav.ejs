@@ -16,7 +16,9 @@
             <a class="nav-link" href="/blog/add">Add Blog</a>
           </li>
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" id="userDropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" id="userDropdown">
+              <img src="/images/avatar.jpg" alt="<%= user.name %>" 
+                   class="rounded-circle me-2" width="32" height="32" style="object-fit: cover;">
               <%= user.name %>
             </a>
             <ul class="dropdown-menu" aria-labelledby="userDropdown">
