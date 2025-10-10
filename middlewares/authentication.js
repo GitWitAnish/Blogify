@@ -12,6 +12,8 @@ function checkForAuthenticationCookie(cookieName){
             req.user = userPayload;
         } catch (error){
             console.log('Token verification failed:', error.message);
+
+            res.clearCookie('token');
         }
             
         return next();

@@ -11,7 +11,7 @@ function createToken(user){
         role: user.role,
     };
 
-    const token = JWT.sign(payload, SECRET);
+    const token = JWT.sign(payload, SECRET, { expiresIn: '1d' }); 
     return token;
 }
 

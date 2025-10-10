@@ -16,9 +16,8 @@ router.post('/signin', async (req, res) => {
         const { email, password } = req.body;
 
         const token = await User.matchPasswordAndCreateToken(email, password);
-  
-
-        return res.cookie('token', token).redirect('/');
+        
+        return res.cookie('token', token, { maxAge: 24 * 60 * 60 * 1000 }).redirect('/');
     } catch (error) {
         return res.render('signin', {
           error: "Incorrect Email or Password"
@@ -31,7 +30,6 @@ router.post('/signup', async (req, res) => {
     const { name, email, password } = req.body;
 
 
-    // Check if email already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       console.log('Email already exists');
