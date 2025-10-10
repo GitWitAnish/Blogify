@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('./partials/head.ejs') %>
+    <title><% if (locals.blog) { %><%= blog.title %> - Blog<% } else { %>Blog Details<% } %></title>
+</head>
+<body>
+    <%- include('./partials/nav.ejs') %>
+    
+    <div class="container mt-4">
+        <% if (locals.error) { %>
+            <div class="alert alert-danger" role="alert">
+                <h4 class="alert-heading">Error!</h4>
+                <p><%= error %></p>
+                <hr>
+                <p class="mb-0">
+                    <a href="/" class="btn btn-primary">Go Back to Home</a>
+                </p>
+            </div>
+        <% } else if (locals.blog) { %>
+            <div class="row">
+                <div class="col-12">
+                    <!-- Blog Header -->
+                    <div class="mb-4">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Blog Details</li>
+                            </ol>
+                        </nav>
+                        
+                        <h1 class="display-4 mb-3"><%= blog.title %></h1>
+                        
+                        <!-- Author Info -->
+                        <div class="d-flex align-items-center mb-3">
+                            <% if (blog.createdBy.profileImageURL) { %>
+                                <img src="<%= blog.createdBy.profileImageURL %>" alt="<%= blog.createdBy.name %>" 
+                                     class="rounded-circle me-3" width="50" height="50">
+                            <% } else { %>
+                                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3" 
+                                     style="width: 50px; height: 50px;">
+                                    <%= blog.createdBy.name.charAt(0).toUpperCase() %>
+                                </div>
+                            <% } %>
+                            <div>
+                                <h6 class="mb-0">By <%= blog.createdBy.name %></h6>
+                                <small class="text-muted">
+                                    Published on <%= new Date(blog.createdAt).toLocaleDateString('en-US', { 
+                                        year: 'numeric', 
+                                        month: 'long', 
+                                        day: 'numeric' 
+                                    }) %>
+                                    <% if (blog.updatedAt && blog.updatedAt.getTime() !== blog.createdAt.getTime()) { %>
+                                        • Updated on <%= new Date(blog.updatedAt).toLocaleDateString('en-US', { 
+                                            year: 'numeric', 
+                                            month: 'long', 
+                                            day: 'numeric' 
+                                        }) %>
+                                    <% } %>
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Edit/Delete Actions for Author -->
+                        <% if (locals.user && user._id.toString() === blog.createdBy._id.toString()) { %>
+                            <div class="mb-3">
+                                <div class="alert alert-info">
+                                    <small><i class="bi bi-info-circle"></i> You are the author of this blog post</small>
+                                </div>
+                            </div>
+                        <% } %>
+                    </div>
+
+                    <!-- Cover Image -->
+                    <% if (blog.coverImageURL) { %>
+                        <div class="mb-4">
+                            <img src="<%= blog.coverImageURL %>" alt="<%= blog.title %>" 
+                                 class="img-fluid rounded shadow" style="width: 100%; max-height: 400px; object-fit: cover;">
+                        </div>
+                    <% } %>
+
+                    <!-- Blog Content -->
+                    <div class="mb-5">
+                        <div class="blog-content" style="font-size: 1.1rem; line-height: 1.7;">
+                            <%- blog.body.replace(/\n/g, '<br>') %>
+                        </div>
+                    </div>
+
+                    <!-- Blog Footer -->
+                    <hr>
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <% if (blog.createdBy.profileImageURL) { %>
+                                        <img src="<%= blog.createdBy.profileImageURL %>" alt="<%= blog.createdBy.name %>" 
+                                             class="rounded-circle mb-2" width="80" height="80">
+                                    <% } else { %>
+                                        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mx-auto mb-2" 
+                                             style="width: 80px; height: 80px; font-size: 2rem;">
+                                            <%= blog.createdBy.name.charAt(0).toUpperCase() %>
+                                        </div>
+                                    <% } %>
+                                    <h5 class="card-title"><%= blog.createdBy.name %></h5>
+                                    <p class="card-text text-muted">Blog Author</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-grid gap-2">
+                                <a href="/" class="btn btn-outline-primary">
+                                    <i class="bi bi-arrow-left"></i> Back to All Blogs
+                                </a>
+                                <% if (locals.user) { %>
+                                    <a href="/blog/add" class="btn btn-primary">
+                                        <i class="bi bi-plus-circle"></i> Write New Blog
+                                    </a>
+                                <% } else { %>
+                                    <a href="/user/signin" class="btn btn-success">
+                                        <i class="bi bi-person-plus"></i> Sign In to Write
+                                    </a>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <% } else { %>
+            <!-- Fallback for no blog data -->
+            <div class="text-center py-5">
+                <h2 class="text-muted">Blog Not Found</h2>
+                <p class="text-muted">The blog post you're looking for doesn't exist or has been removed.</p>
+                <a href="/" class="btn btn-primary">Go Back to Home</a>
+            </div>
+        <% } %>
+    </div>
+
+    <%- include('./partials/scripts.ejs') %>
+</body>
+</html>
