@@ -63,5 +63,33 @@ router.post('/add', upload.single('coverImage'), async (req, res) => {
     }
 });
 
+router.get('/:id', async (req, res) => {
+    const blogId = req.params.id;
+
+    // Validate MongoDB ObjectId format
+    if (!blogId.match(/^[0-9a-fA-F]{24}$/)) {
+        return res.status(404).render('404', { user: req.user });
+    }
+
+    try {
+        const blog = await Blog.findById(blogId).populate('createdBy', 'name profileImageURL');
+
+        if (!blog) {
+            return res.status(404).render('404', { user: req.user });
+        }
+
+        return res.render('blogDetails', {
+            user: req.user,
+            blog
+        });
+    } catch (error) {
+        console.error('Error fetching blog post:', error);
+        return res.status(500).render('blogDetails', {
+            user: req.user,
+            error: 'Error loading blog post'
+        });
+    }
+});
+
 
 module.exports = router;
