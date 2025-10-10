@@ -18,10 +18,6 @@
 /*.log
 /npm-debug.log*
 
-# OS-specific files
-/.DS_Store
-/Thumbs.db
-
 # User uploaded files 
 /public/uploads/*
 !/public/uploads/.gitkeep
