@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const Blog = require('../models/blog');
+const Comment = require('../models/comment');
 const path = require('path');
 const multer = require('multer');
 const fs = require('fs');
@@ -72,15 +73,22 @@ router.get('/:id', async (req, res) => {
     }
 
     try {
-        const blog = await Blog.findById(blogId).populate('createdBy', 'name profileImageURL');
+        const blog = await Blog.findById(blogId)
+            .populate('createdBy', 'name profileImageURL');
 
         if (!blog) {
             return res.status(404).render('404', { user: req.user });
         }
 
+        // Fetch comments separately
+        const comments = await Comment.find({ blog: blogId })
+            .populate('user', 'name profileImageURL')
+            .sort({ createdAt: -1 });
+
         return res.render('blogDetails', {
             user: req.user,
-            blog
+            blog,
+            comments
         });
     } catch (error) {
         console.error('Error fetching blog post:', error);
@@ -107,6 +115,45 @@ router.post('/:id/delete', async (req, res) => {
             user: req.user,
             error: 'Error deleting blog post'
         });
+    }
+});
+
+router.post('/comment/:blogId', async (req, res) => {
+    if(!req.user){
+        return res.redirect('/user/signin');
+    }   
+
+    const blogId = req.params.blogId;
+    const { content } = req.body;
+
+    if (!blogId.match(/^[0-9a-fA-F]{24}$/)) {
+        return res.status(404).render('404', { user: req.user });
+    }
+
+    if (!content || content.trim().length === 0) {
+        return res.redirect(`/blog/${blogId}`);
+    }
+
+    if (content.length > 500) {
+        return res.redirect(`/blog/${blogId}`);
+    }
+
+    try {
+        const blog = await Blog.findById(blogId);
+        if (!blog) {
+            return res.status(404).render('404', { user: req.user });
+        }
+
+        await Comment.create({
+            blog: blogId,
+            user: req.user._id,
+            content: content.trim()
+        });
+
+        return res.redirect(`/blog/${blogId}`);
+    } catch (error) {
+        console.error('Error adding comment:', error);
+        return res.redirect(`/blog/${blogId}`);
     }
 });
 
