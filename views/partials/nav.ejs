@@ -17,8 +17,9 @@
           </li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" id="userDropdown">
-              <img src="/images/avatar.jpg" alt="<%= user.name %>" 
-                   class="rounded-circle me-2" width="32" height="32" style="object-fit: cover;">
+              <img src="<%= user.profileImageURL || '/images/avatar.jpg' %>" alt="<%= user.name %>" 
+                   class="rounded-circle me-2" width="32" height="32" style="object-fit: cover;"
+                   onerror="this.src='/images/avatar.jpg';">
               <%= user.name %>
             </a>
             <ul class="dropdown-menu" aria-labelledby="userDropdown">
