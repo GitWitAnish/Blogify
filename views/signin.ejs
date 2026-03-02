@@ -2,34 +2,55 @@
 <html lang="en">
 <head>
     <%- include('./partials/head.ejs') %>
-    <title>Sign In</title>
+    <title>Sign In - Blogify</title>
 </head>
 <body>
     <%- include('./partials/nav.ejs') %>
     
-    <div class="container mt-4">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="text-center">Sign In</h3>
-                    </div>
-                    <div class="card-body">
-                        <form action="/user/signin" method="POST">
-                            <div class="mb-3">
-                                <label for="email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="email" name="email" required>
+    <div class="auth-wrapper">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-5">
+                    <div class="auth-card">
+                        <div class="auth-header">
+                            <i class="bi bi-shield-lock" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                            <h2 class="mb-0">Welcome Back</h2>
+                            <p class="mb-0 mt-2" style="opacity: 0.9;">Sign in to continue your journey</p>
+                        </div>
+                        <div class="p-4">
+                            <% if (locals.error) { %>
+                                <div class="alert alert-danger d-flex align-items-center" role="alert">
+                                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                    <div><%= error %></div>
+                                </div>
+                            <% } %>
+                            <form action="/user/signin" method="POST">
+                                <div class="mb-3">
+                                    <label for="email" class="form-label fw-semibold">
+                                        <i class="bi bi-envelope me-2"></i>Email Address
+                                    </label>
+                                    <input type="email" class="form-control form-control-lg" id="email" name="email" placeholder="you@example.com" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="password" class="form-label fw-semibold">
+                                        <i class="bi bi-key me-2"></i>Password
+                                    </label>
+                                    <input type="password" class="form-control form-control-lg" id="password" name="password" placeholder="Enter your password" required>
+                                </div>
+                                <div class="d-grid mb-3">
+                                    <button type="submit" class="btn btn-primary btn-lg">
+                                        <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+                                    </button>
+                                </div>
+                            </form>
+                            <div class="text-center pt-3 border-top">
+                                <p class="text-muted mb-0">
+                                    Don't have an account? 
+                                    <a href="/user/signup" class="fw-semibold text-decoration-none" style="color: var(--primary);">
+                                        Create one now
+                                    </a>
+                                </p>
                             </div>
-                            <div class="mb-3">
-                                <label for="password" class="form-label">Password</label>
-                                <input type="password" class="form-control" id="password" name="password" required>
-                            </div>
-                            <div class="d-grid">
-                                <button type="submit" class="btn btn-primary">Sign In</button>
-                            </div>
-                        </form>
-                        <div class="text-center mt-3">
-                            <p>Don't have an account? <a href="/user/signup">Sign Up</a></p>
                         </div>
                     </div>
                 </div>

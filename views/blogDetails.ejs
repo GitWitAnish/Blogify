@@ -2,219 +2,205 @@
 <html lang="en">
 <head>
     <%- include('./partials/head.ejs') %>
-    <title><% if (locals.blog) { %><%= blog.title %> - Blog<% } else { %>Blog Details<% } %></title>
+    <title><% if (locals.blog) { %><%= blog.title %> - Blogify<% } else { %>Blog Details<% } %></title>
 </head>
 <body>
     <%- include('./partials/nav.ejs') %>
     
-    <div class="container mt-4">
-        <% if (locals.error) { %>
-            <div class="alert alert-danger" role="alert">
-                <h4 class="alert-heading">Error!</h4>
-                <p><%= error %></p>
-                <hr>
-                <p class="mb-0">
-                    <a href="/" class="btn btn-primary">Go Back to Home</a>
-                </p>
+    <% if (locals.error) { %>
+        <div class="main-content">
+            <div class="container">
+                <div class="text-center py-5">
+                    <div class="floating-animation mb-4">
+                        <i class="bi bi-exclamation-triangle" style="font-size: 5rem; color: var(--accent);"></i>
+                    </div>
+                    <h2 class="gradient-text mb-3">Something Went Wrong</h2>
+                    <p class="lead text-muted mb-4"><%= error %></p>
+                    <a href="/" class="btn btn-primary btn-lg">
+                        <i class="bi bi-house-door me-2"></i>Go Back Home
+                    </a>
+                </div>
             </div>
-        <% } else if (locals.blog) { %>
-            <div class="row">
-                <div class="col-12">
-                    <!-- Blog Header -->
-                    <div class="mb-4">
-                        <nav aria-label="breadcrumb">
+        </div>
+    <% } else if (locals.blog) { %>
+        <div class="main-content">
+            <article class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-10">
+                        <!-- Breadcrumb -->
+                        <nav aria-label="breadcrumb" class="mb-4">
                             <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                                <li class="breadcrumb-item"><a href="/" class="text-decoration-none" style="color: var(--primary);"><i class="bi bi-house-door me-1"></i>Home</a></li>
                                 <li class="breadcrumb-item active" aria-current="page">Blog Details</li>
                             </ol>
                         </nav>
                         
-                        <h1 class="display-4 mb-3"><%= blog.title %></h1>
-                        
-                        <!-- Author Info -->
-                        <div class="d-flex align-items-center mb-3">
-                            <img src="<%= blog.createdBy.profileImageURL || '/images/avatar.jpg' %>" alt="<%= blog.createdBy.name %>" 
-                                 class="rounded-circle me-3" width="50" height="50" style="object-fit: cover;"
-                                 onerror="this.src='/images/avatar.jpg';">
-                            <div>
-                                <h6 class="mb-0">By <%= blog.createdBy.name %></h6>
-                                <small class="text-muted">
-                                    Published on <%= new Date(blog.createdAt).toLocaleDateString('en-US', { 
-                                        year: 'numeric', 
-                                        month: 'long', 
-                                        day: 'numeric' 
-                                    }) %>
-                                    <% if (blog.updatedAt && blog.updatedAt.getTime() !== blog.createdAt.getTime()) { %>
-                                        • Updated on <%= new Date(blog.updatedAt).toLocaleDateString('en-US', { 
-                                            year: 'numeric', 
-                                            month: 'long', 
-                                            day: 'numeric' 
-                                        }) %>
-                                    <% } %>
-                                </small>
-                            </div>
-                        </div>
-
-                        <!-- Edit/Delete Actions for Author -->
-                        <% if (locals.user && user._id.toString() === blog.createdBy._id.toString()) { %>
-                            <div class="mb-3">
-                                <div class="alert alert-info">
-                                    <small><i class="bi bi-info-circle"></i> You are the author of this blog post</small>
+                        <!-- Blog Title -->
+                        <header class="mb-5 text-center">
+                            <h1 class="display-4 mb-4" style="line-height: 1.3;"><%= blog.title %></h1>
+                            
+                            <!-- Author Info -->
+                            <div class="d-flex align-items-center justify-content-center gap-3 mb-4">
+                                <img src="<%= blog.createdBy.profileImageURL || '/images/avatar.jpg' %>" alt="<%= blog.createdBy.name %>" 
+                                     class="rounded-circle" width="60" height="60" style="object-fit: cover; border: 3px solid white; box-shadow: var(--shadow-md);"
+                                     onerror="this.src='/images/avatar.jpg';">
+                                <div class="text-start">
+                                    <h6 class="mb-1 fw-bold"><%= blog.createdBy.name %></h6>
+                                    <small class="text-muted">
+                                        <i class="bi bi-calendar3 me-1"></i>
+                                        <%= new Date(blog.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %>
+                                    </small>
                                 </div>
                             </div>
+
+                            <% if (locals.user && user._id.toString() === blog.createdBy._id.toString()) { %>
+                                <div class="alert alert-info d-inline-flex align-items-center">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    <span>You are the author of this blog</span>
+                                </div>
+                            <% } %>
+                        </header>
+
+                        <!-- Cover Image -->
+                        <% if (blog.coverImageURL) { %>
+                            <div class="mb-5">
+                                <img src="<%= blog.coverImageURL %>" alt="<%= blog.title %>" 
+                                     class="img-fluid rounded-3 shadow-lg" style="width: 100%; max-height: 500px; object-fit: cover;">
+                            </div>
                         <% } %>
-                    </div>
 
-                    <!-- Cover Image -->
-                    <% if (blog.coverImageURL) { %>
-                        <div class="mb-4">
-                            <img src="<%= blog.coverImageURL %>" alt="<%= blog.title %>" 
-                                 class="img-fluid rounded shadow" style="width: 100%; max-height: 400px; object-fit: cover;">
-                        </div>
-                    <% } %>
-
-                    <!-- Blog Content -->
-                    <div class="mb-5">
-                        <div class="blog-content" style="font-size: 1.1rem; line-height: 1.7;">
+                        <!-- Blog Content -->
+                        <section class="blog-detail-content mb-5 px-lg-4">
                             <%- blog.body.replace(/\n/g, '<br>') %>
-                        </div>
-                    </div>
+                        </section>
 
-                    <!-- Comments Section -->
-                    <div class="mb-5">
-                        <hr>
-                        <h3 class="mb-4">
-                            <i class="bi bi-chat-dots"></i> 
-                            Comments (<%= locals.comments ? comments.length : 0 %>)
-                        </h3>
+                        <hr class="my-5">
 
-                        <!-- Add Comment Form -->
-                        <% if (locals.user) { %>
-                            <div class="card mb-4">
-                                <div class="card-header">
-                                    <h5 class="mb-0">
-                                        <i class="bi bi-plus-circle"></i> Add a Comment
-                                    </h5>
-                                </div>
-                                <div class="card-body">
-                                    <form action="/blog/comment/<%= blog._id %>" method="POST">
-                                        <div class="mb-3">
-                                            <div class="d-flex align-items-start">
+                        <!-- Comments Section -->
+                        <section class="comments-section mb-5">
+                            <h3 class="section-title mb-4">
+                                <i class="bi bi-chat-dots me-2"></i>
+                                Comments <span class="badge badge-author"><%= locals.comments ? comments.length : 0 %></span>
+                            </h3>
+
+                            <!-- Add Comment Form -->
+                            <% if (locals.user) { %>
+                                <div class="mb-4" style="background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden;">
+                                    <div class="p-4">
+                                        <h5 class="mb-3">
+                                            <i class="bi bi-plus-circle me-2"></i>Share Your Thoughts
+                                        </h5>
+                                        <form action="/blog/comment/<%= blog._id %>" method="POST">
+                                            <div class="d-flex gap-3 mb-3">
                                                 <img src="<%= user.profileImageURL || '/images/avatar.jpg' %>" alt="<%= user.name %>" 
-                                                     class="rounded-circle me-3" width="40" height="40" style="object-fit: cover;"
+                                                     class="rounded-circle" width="50" height="50" style="object-fit: cover;"
                                                      onerror="this.src='/images/avatar.jpg';">
-                                                <div class="flex-grow-1">
-                                                    <textarea class="form-control" name="content" rows="3" 
-                                                            placeholder="Share your thoughts..." 
-                                                            maxlength="500" required></textarea>
-                                                    <div class="form-text">Maximum 500 characters</div>
-                                                </div>
+                                                <textarea class="form-control" name="content" rows="3" 
+                                                        placeholder="What are your thoughts on this story?" 
+                                                        maxlength="500" required style="resize: none;"></textarea>
                                             </div>
-                                        </div>
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <small class="text-muted">
-                                                Commenting as <strong><%= user.name %></strong>
-                                            </small>
-                                            <button type="submit" class="btn btn-primary">
-                                                <i class="bi bi-send"></i> Post Comment
-                                            </button>
-                                        </div>
-                                    </form>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <small class="text-muted">
+                                                    <i class="bi bi-person-circle me-1"></i>
+                                                    Posting as <strong><%= user.name %></strong>
+                                                </small>
+                                                <button type="submit" class="btn btn-primary">
+                                                    <i class="bi bi-send me-2"></i>Post Comment
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
                                 </div>
-                            </div>
-                        <% } else { %>
-                            <div class="alert alert-info">
-                                <i class="bi bi-info-circle"></i> 
-                                <a href="/user/signin" class="alert-link">Sign in</a> to join the conversation and leave a comment.
-                            </div>
-                        <% } %>
+                            <% } else { %>
+                                <div class="alert alert-info d-flex align-items-center">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    <div>
+                                        <a href="/user/signin" class="alert-link fw-semibold">Sign in</a> to join the conversation and share your thoughts!
+                                    </div>
+                                </div>
+                            <% } %>
 
-                        <!-- Display Comments -->
-                        <% if (locals.comments && comments.length > 0) { %>
-                            <div class="comments-list">
-                                <% comments.forEach(comment => { %>
-                                    <div class="card mb-3">
-                                        <div class="card-body">
-                                            <div class="d-flex align-items-start">
+                            <!-- Display Comments -->
+                            <% if (locals.comments && comments.length > 0) { %>
+                                <div class="comments-list">
+                                    <% comments.forEach(comment => { %>
+                                        <div class="comment-card">
+                                            <div class="d-flex gap-3">
                                                 <img src="<%= comment.user.profileImageURL || '/images/avatar.jpg' %>" alt="<%= comment.user.name %>" 
-                                                     class="rounded-circle me-3" width="40" height="40" style="object-fit: cover;"
+                                                     class="rounded-circle" width="50" height="50" style="object-fit: cover;"
                                                      onerror="this.src='/images/avatar.jpg';">
                                                 <div class="flex-grow-1">
-                                                    <div class="d-flex justify-content-between align-items-center mb-1">
-                                                        <h6 class="mb-0">
-                                                            <%= comment.user.name %>
-                                                            <% if (comment.user._id.toString() === blog.createdBy._id.toString()) { %>
-                                                                <span class="badge bg-primary ms-1">Author</span>
-                                                            <% } %>
-                                                        </h6>
+                                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                                        <div>
+                                                            <h6 class="mb-0 fw-semibold">
+                                                                <%= comment.user.name %>
+                                                                <% if (comment.user._id.toString() === blog.createdBy._id.toString()) { %>
+                                                                    <span class="badge badge-author ms-2">Author</span>
+                                                                <% } %>
+                                                            </h6>
+                                                        </div>
                                                         <small class="text-muted">
-                                                            <%= new Date(comment.createdAt).toLocaleString('en-US', { 
-                                                                year: 'numeric', 
-                                                                month: 'short', 
-                                                                day: 'numeric',
-                                                                hour: '2-digit',
-                                                                minute: '2-digit'
-                                                            }) %>
+                                                            <i class="bi bi-clock me-1"></i>
+                                                            <%= new Date(comment.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %>
                                                         </small>
                                                     </div>
-                                                    <p class="mb-0" style="white-space: pre-wrap;"><%= comment.content %></p>
+                                                    <p class="mb-0" style="white-space: pre-wrap; color: var(--text);"><%= comment.content %></p>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                <% }); %>
-                            </div>
-                        <% } else { %>
-                            <div class="text-center py-4">
-                                <i class="bi bi-chat-dots text-muted" style="font-size: 3rem;"></i>
-                                <h5 class="text-muted mt-2">No comments yet</h5>
-                                <p class="text-muted">Be the first to share your thoughts!</p>
-                            </div>
-                        <% } %>
-                    </div>
-
-                    <!-- Blog Footer -->
-                    <hr>
-                    <div class="row mt-4">
-                        <div class="col-md-6">
-                            <div class="card">
-                                <div class="card-body text-center">
-                                    <img src="<%= blog.createdBy.profileImageURL || '/images/avatar.jpg' %>" alt="<%= blog.createdBy.name %>" 
-                                         class="rounded-circle mb-2" width="80" height="80" style="object-fit: cover;"
-                                         onerror="this.src='/images/avatar.jpg';">
-                                    <h5 class="card-title"><%= blog.createdBy.name %></h5>
-                                    <p class="card-text text-muted">Blog Author</p>
+                                    <% }); %>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="d-grid gap-2">
-                                <a href="/" class="btn btn-outline-primary">
-                                    <i class="bi bi-arrow-left"></i> Back to All Blogs
+                            <% } else { %>
+                                <div class="text-center py-5">
+                                    <div class="floating-animation mb-3">
+                                        <i class="bi bi-chat-dots" style="font-size: 4rem; color: var(--primary-light);"></i>
+                                    </div>
+                                    <h5 class="text-muted mb-2">No comments yet</h5>
+                                    <p class="text-muted">Be the first to share your thoughts on this story!</p>
+                                </div>
+                            <% } %>
+                        </section>
+
+                        <hr class="my-5">
+
+                        <!-- Footer Actions -->
+                        <section class="text-center py-4">
+                            <h5 class="mb-4">Enjoyed this story?</h5>
+                            <div class="d-flex gap-3 justify-content-center flex-wrap">
+                                <a href="/" class="btn btn-outline-secondary btn-lg">
+                                    <i class="bi bi-arrow-left me-2"></i>More Stories
                                 </a>
                                 <% if (locals.user) { %>
-                                    <a href="/blog/add" class="btn btn-primary">
-                                        <i class="bi bi-plus-circle"></i> Write New Blog
+                                    <a href="/blog/add" class="btn btn-primary btn-lg">
+                                        <i class="bi bi-pencil-square me-2"></i>Write Your Own
                                     </a>
                                 <% } else { %>
-                                    <a href="/user/signin" class="btn btn-success">
-                                        <i class="bi bi-person-plus"></i> Sign In to Write
+                                    <a href="/user/signup" class="btn btn-primary btn-lg">
+                                        <i class="bi bi-rocket-takeoff me-2"></i>Join Blogify
                                     </a>
                                 <% } %>
                             </div>
-                        </div>
+                        </section>
                     </div>
                 </div>
+            </article>
+        </div>
+    <% } else { %>
+        <div class="main-content">
+            <div class="container">
+                <div class="text-center py-5">
+                    <div class="floating-animation mb-4">
+                        <i class="bi bi-file-earmark-x" style="font-size: 5rem; color: var(--primary-light);"></i>
+                    </div>
+                    <h2 class="gradient-text mb-3">Blog Not Found</h2>
+                    <p class="lead text-muted mb-4">The story you're looking for doesn't exist or has been removed.</p>
+                    <a href="/" class="btn btn-primary btn-lg">
+                        <i class="bi bi-house-door me-2"></i>Discover Other Stories
+                    </a>
+                </div>
             </div>
-        <% } else { %>
-            <!-- Fallback for no blog data -->
-            <div class="text-center py-5">
-                <h2 class="text-muted">Blog Not Found</h2>
-                <p class="text-muted">The blog post you're looking for doesn't exist or has been removed.</p>
-                <a href="/" class="btn btn-primary">Go Back to Home</a>
-            </div>
-        <% } %>
-    </div>
+        </div>
+    <% } %>
 
     <%- include('./partials/scripts.ejs') %>
 </body>
