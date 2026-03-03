@@ -1,47 +1,136 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <%- include('./partials/head.ejs') %>
-    <title>Add New Blog </title>
-</head>
-<body>
+    <title>Write a New Story - Blogify</title>
+  </head>
+  <body>
     <%- include('./partials/nav.ejs') %>
-    
-    <div class="container mt-4">
+
+    <div class="main-content">
+      <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title mb-0">Create Blog </h3>
-                    </div>
-                    <div class="card-body">
-                        <form action="/blog/add" method="POST" enctype="multipart/form-data">
-                            <div class="mb-3">
-                                <label for="title" class="form-label">Blog Title</label>
-                                <input type="text" class="form-control" id="title" name="title" required>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="body" class="form-label">Blog Content</label>
-                                <textarea class="form-control" id="body" name="body" rows="10" required></textarea>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="coverImage" class="form-label">Cover Image</label>
-                                <input type="file" class="form-control" id="coverImage" name="coverImage" accept="image/*">
-                            </div>
-                            
-                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                <a href="/" class="btn btn-secondary me-md-2">Cancel</a>
-                                <button type="submit" class="btn btn-primary">Submit</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+          <div class="col-lg-9">
+            <div class="text-center mb-5">
+              <h1 class="display-4 gradient-text mb-3">
+                <i class="bi bi-pencil-square me-3"></i>Write Your Story
+              </h1>
+              <p class="lead text-muted">
+                Share your thoughts, ideas, and experiences with the world
+              </p>
             </div>
+
+            <div
+              style="
+                background: var(--surface);
+                border: 1px solid var(--border);
+                border-radius: var(--radius);
+                box-shadow: var(--shadow-sm);
+              "
+            >
+              <div class="p-4 p-lg-5">
+                <form
+                  action="/blog/add"
+                  method="POST"
+                  enctype="multipart/form-data"
+                >
+                  <div class="mb-4">
+                    <label for="title" class="form-label fw-semibold h5">
+                      <i class="bi bi-text-left me-2"></i>Blog Title
+                    </label>
+                    <input
+                      type="text"
+                      class="form-control form-control-lg"
+                      id="title"
+                      name="title"
+                      placeholder="Enter an engaging title for your blog..."
+                      required
+                    />
+                    <div class="form-text">Make it catchy and descriptive</div>
+                  </div>
+
+                  <div class="mb-4">
+                    <label for="coverImage" class="form-label fw-semibold h5">
+                      <i class="bi bi-image me-2"></i>Cover Image
+                    </label>
+                    <input
+                      type="file"
+                      class="form-control form-control-lg"
+                      id="coverImage"
+                      name="coverImage"
+                      accept="image/*"
+                      onchange="previewCoverImage(event)"
+                    />
+                    <div class="form-text">
+                      Choose a beautiful cover image for your blog
+                    </div>
+                    <div id="imagePreview" class="mt-3" style="display: none">
+                      <img
+                        id="coverPreview"
+                        class="img-fluid rounded shadow"
+                        alt="Cover Preview"
+                        style="
+                          max-height: 300px;
+                          width: 100%;
+                          object-fit: cover;
+                        "
+                      />
+                    </div>
+                  </div>
+
+                  <div class="mb-4">
+                    <label for="body" class="form-label fw-semibold h5">
+                      <i class="bi bi-file-text me-2"></i>Content
+                    </label>
+                    <textarea
+                      class="form-control"
+                      id="body"
+                      name="body"
+                      rows="15"
+                      placeholder="Share your story... Be creative, be authentic, be you!"
+                      style="font-size: 1.05rem; line-height: 1.7"
+                      required
+                    ></textarea>
+                    <div class="form-text">
+                      Pour your heart into your writing
+                    </div>
+                  </div>
+
+                  <div class="d-flex gap-3 justify-content-end pt-3">
+                    <a href="/" class="btn btn-outline-secondary btn-lg">
+                      <i class="bi bi-x-circle me-2"></i>Cancel
+                    </a>
+                    <button type="submit" class="btn btn-primary btn-lg">
+                      <i class="bi bi-send me-2"></i>Publish Story
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
-    
+
     <%- include('./partials/scripts.ejs') %>
-</body>
+
+    <script>
+      function previewCoverImage(event) {
+        const file = event.target.files[0];
+        const preview = document.getElementById("coverPreview");
+        const previewContainer = document.getElementById("imagePreview");
+
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            preview.src = e.target.result;
+            previewContainer.style.display = "block";
+          };
+          reader.readAsDataURL(file);
+        } else {
+          previewContainer.style.display = "none";
+        }
+      }
+    </script>
+  </body>
 </html>
