@@ -99,6 +99,80 @@ router.get('/:id', async (req, res) => {
     }
 });
 
+router.get('/edit/:id', async (req, res) => {
+    if (!req.user) {
+        return res.redirect('/user/signin');
+    }
+
+    const blogId = req.params.id;
+
+    if (!blogId.match(/^[0-9a-fA-F]{24}$/)) {
+        return res.status(404).render('404', { user: req.user });
+    }
+
+    try {
+        const blog = await Blog.findById(blogId);
+
+        if (!blog) {
+            return res.status(404).render('404', { user: req.user });
+        }
+
+        if (blog.createdBy.toString() !== req.user._id.toString()) {
+            return res.redirect(`/blog/${blogId}`);
+        }
+
+        return res.render('editBlog', {
+            user: req.user,
+            blog
+        });
+    } catch (error) {
+        console.error('Error loading blog for edit:', error);
+        return res.redirect('/');
+    }
+});
+
+router.post('/edit/:id', upload.single('coverImage'), async (req, res) => {
+    if (!req.user) {
+        return res.redirect('/user/signin');
+    }
+
+    const blogId = req.params.id;
+
+    if (!blogId.match(/^[0-9a-fA-F]{24}$/)) {
+        return res.status(404).render('404', { user: req.user });
+    }
+
+    try {
+        const blog = await Blog.findById(blogId);
+
+        if (!blog) {
+            return res.status(404).render('404', { user: req.user });
+        }
+
+        if (blog.createdBy.toString() !== req.user._id.toString()) {
+            return res.redirect(`/blog/${blogId}`);
+        }
+
+        const { title, body } = req.body;
+        const updateData = { title, body };
+
+        if (req.file) {
+            updateData.coverImageURL = `/uploads/${req.user._id}/${req.file.filename}`;
+        }
+
+        await Blog.findByIdAndUpdate(blogId, updateData);
+        return res.redirect(`/blog/${blogId}`);
+    } catch (error) {
+        console.error('Error updating blog post:', error);
+        const blog = await Blog.findById(blogId).catch(() => null);
+        return res.render('editBlog', {
+            user: req.user,
+            blog,
+            error: 'Error updating blog post'
+        });
+    }
+});
+
 router.post('/:id/delete', async (req, res) => {
     if(!req.user){
         return res.redirect('/user/signin');
