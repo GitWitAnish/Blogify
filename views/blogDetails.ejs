@@ -62,6 +62,37 @@
                                     <a href="/blog/edit/<%= blog._id %>" class="btn btn-outline-primary">
                                         <i class="bi bi-pencil-square me-2"></i>Edit Blog
                                     </a>
+                                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                        <i class="bi bi-trash me-2"></i>Delete Blog
+                                    </button>
+                                </div>
+
+                                <!-- Delete Confirmation Modal -->
+                                <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content" style="border-radius: var(--radius); border: 1px solid var(--border);">
+                                            <div class="modal-header border-0 pb-0">
+                                                <h5 class="modal-title" id="deleteModalLabel">
+                                                    <i class="bi bi-exclamation-triangle text-danger me-2"></i>Delete Blog
+                                                </h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p class="mb-1">Are you sure you want to delete <strong>&quot;<%= blog.title %>&quot;</strong>?</p>
+                                                <p class="text-muted small mb-0">This action cannot be undone. All comments on this blog will also be deleted.</p>
+                                            </div>
+                                            <div class="modal-footer border-0 pt-0">
+                                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                                    <i class="bi bi-x-circle me-1"></i>Cancel
+                                                </button>
+                                                <form action="/blog/<%= blog._id %>/delete" method="POST" class="d-inline">
+                                                    <button type="submit" class="btn btn-danger">
+                                                        <i class="bi bi-trash me-1"></i>Yes, Delete
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             <% } %>
                         </header>

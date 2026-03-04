@@ -180,7 +180,32 @@ router.post('/:id/delete', async (req, res) => {
 
     const blogId = req.params.id;
 
+    if (!blogId.match(/^[0-9a-fA-F]{24}$/)) {
+        return res.status(404).render('404', { user: req.user });
+    }
+
     try {
+        const blog = await Blog.findById(blogId);
+
+        if (!blog) {
+            return res.status(404).render('404', { user: req.user });
+        }
+
+        if (blog.createdBy.toString() !== req.user._id.toString()) {
+            return res.redirect(`/blog/${blogId}`);
+        }
+
+        // Delete associated comments
+        await Comment.deleteMany({ blog: blogId });
+
+        // Delete the blog cover image file if it exists
+        if (blog.coverImageURL) {
+            const imagePath = path.resolve('public' + blog.coverImageURL);
+            if (fs.existsSync(imagePath)) {
+                fs.unlinkSync(imagePath);
+            }
+        }
+
         await Blog.findByIdAndDelete(blogId);
         return res.redirect('/');
     } catch (error) {
