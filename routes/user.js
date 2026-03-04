@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const User = require('../models/user');
+const Blog = require('../models/blog');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
@@ -104,6 +105,112 @@ router.post('/signup', profileUpload.single('profileImage'), async (req, res) =>
       error: 'Error creating user'
     });
   }
+});
+
+router.get('/profile', async (req, res) => {
+    if (!req.user) {
+        return res.redirect('/user/signin');
+    }
+
+    try {
+        const profileUser = await User.findById(req.user._id);
+        if (!profileUser) {
+            return res.status(404).render('404', { user: req.user });
+        }
+
+        const blogs = await Blog.find({ createdBy: req.user._id })
+            .sort({ createdAt: -1 });
+
+        return res.render('profile', {
+            user: req.user,
+            profileUser,
+            blogs,
+            isOwnProfile: true
+        });
+    } catch (error) {
+        console.error('Error loading profile:', error);
+        return res.redirect('/');
+    }
+});
+
+router.get('/profile/:id', async (req, res) => {
+    const userId = req.params.id;
+
+    if (!userId.match(/^[0-9a-fA-F]{24}$/)) {
+        return res.status(404).render('404', { user: req.user });
+    }
+
+    // Redirect to own profile page if viewing self
+    if (req.user && req.user._id.toString() === userId) {
+        return res.redirect('/user/profile');
+    }
+
+    try {
+        const profileUser = await User.findById(userId);
+        if (!profileUser) {
+            return res.status(404).render('404', { user: req.user });
+        }
+
+        const blogs = await Blog.find({ createdBy: userId })
+            .sort({ createdAt: -1 });
+
+        return res.render('profile', {
+            user: req.user,
+            profileUser,
+            blogs,
+            isOwnProfile: false
+        });
+    } catch (error) {
+        console.error('Error loading profile:', error);
+        return res.redirect('/');
+    }
+});
+
+router.post('/profile/update', profileUpload.single('profileImage'), async (req, res) => {
+    if (!req.user) {
+        return res.redirect('/user/signin');
+    }
+
+    try {
+        const { name } = req.body;
+        const updateData = {};
+
+        if (name && name.trim().length > 0) {
+            updateData.name = name.trim();
+        }
+
+        if (req.file) {
+            updateData.profileImageURL = `/uploads/profiles/${req.file.filename}`;
+        }
+
+        await User.findByIdAndUpdate(req.user._id, updateData);
+
+        const profileUser = await User.findById(req.user._id);
+        const blogs = await Blog.find({ createdBy: req.user._id })
+            .sort({ createdAt: -1 });
+
+        return res.render('profile', {
+            user: { ...req.user, ...updateData },
+            profileUser,
+            blogs,
+            isOwnProfile: true,
+            success: 'Profile updated successfully!'
+        });
+    } catch (error) {
+        console.error('Error updating profile:', error);
+
+        const profileUser = await User.findById(req.user._id).catch(() => null);
+        const blogs = await Blog.find({ createdBy: req.user._id })
+            .sort({ createdAt: -1 }).catch(() => []);
+
+        return res.render('profile', {
+            user: req.user,
+            profileUser,
+            blogs,
+            isOwnProfile: true,
+            error: 'Error updating profile'
+        });
+    }
 });
 
 router.get('/logout', (req, res) => {
