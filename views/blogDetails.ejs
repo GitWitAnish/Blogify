@@ -45,7 +45,7 @@
                                      class="rounded-circle" width="60" height="60" style="object-fit: cover; border: 3px solid white; box-shadow: var(--shadow-md);"
                                      onerror="this.src='/images/avatar.jpg';">
                                 <div class="text-start">
-                                    <h6 class="mb-1 fw-bold"><%= blog.createdBy.name %></h6>
+                                    <h6 class="mb-1 fw-bold"><a href="/user/profile/<%= blog.createdBy._id %>" class="text-decoration-none" style="color: inherit;"><%= blog.createdBy.name %></a></h6>
                                     <small class="text-muted">
                                         <i class="bi bi-calendar3 me-1"></i>
                                         <%= new Date(blog.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %>
